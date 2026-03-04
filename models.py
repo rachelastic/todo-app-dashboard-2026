@@ -8,6 +8,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     tasks = db.relationship('Task', backref='user')
     visits = db.relationship('Visit')  # added visits to user
 
@@ -61,6 +62,17 @@ class Waitlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(80), unique=True, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+    ip_address = db.Column(db.String(45), nullable=True)
 
     def __repr__(self):
         return f"<Waitlist id={self.id} email='{self.email}' timestamp={self.timestamp}>"
+
+
+class ErrorLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(500), nullable=False)
+    category = db.Column(db.String(50), nullable=True)  # e.g. 'login', 'signup'
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __repr__(self):
+        return f"<ErrorLog id={self.id} category='{self.category}' message='{self.message}'>"
